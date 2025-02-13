@@ -1010,6 +1010,7 @@ jobs:
             $PYTHON_INCLUDE_DIR = "${env:PYTHON_LOCATION_${{ matrix.arch }}}/include"
             $PYTHON_BINARY="python.exe"
             $ExeSuffix = ".exe"
+            $StaticLibSuffix = "s.lib"
             Remove-Item env:\SDKROOT
           } elseif ( "${{ matrix.os }}" -eq "Darwin" ) {
             # Default swiftc comes from /usr/bin and is not compatible with the toolchain.
@@ -1029,6 +1030,7 @@ jobs:
             $PYTHON_INCLUDE_DIR = "${env:pythonLocation}/include/python3.9"
             $PYTHON_BINARY="python3"
             $ExeSuffix = ""
+            $StaticLibSuffix = ".a"
           }
 
           $SwiftFlags += " -sdk `"${SDKROOT}`""
@@ -1059,6 +1061,7 @@ jobs:
                 -D LLVM_NATIVE_TOOL_DIR=${{ github.workspace }}/BinaryCache/0/bin `
                 -D LLVM_TABLEGEN="${{ github.workspace }}/BinaryCache/0/bin/llvm-tblgen${ExeSuffix}" `
                 -D LLVM_USE_HOST_TOOLS=NO `
+                -D LLVM_ENABLE_LIBXML2=FORCE_ON `
                 -D SWIFT_BUILD_DYNAMIC_SDK_OVERLAY=NO `
                 -D SWIFT_BUILD_DYNAMIC_STDLIB=NO `
                 -D SWIFT_BUILD_REMOTE_MIRROR=NO `
@@ -1080,6 +1083,9 @@ jobs:
                 -D CLANG_VENDOR_UTI=org.compnerd.dt `
                 -D cmark-gfm_DIR=${{ github.workspace }}/BinaryCache/Library/cmark-gfm-${{ inputs.swift_cmark_version }}/usr/lib/cmake `
                 -D LibXml2_DIR=${{ github.workspace }}/BinaryCache/Library/libxml2-${{ inputs.libxml2_version }}/usr/lib/cmake/libxml2-${{ inputs.libxml2_version }} `
+                -D LIBXML2_LIBRARY="${{ github.workspace }}/BinaryCache/Library/libxml2-${{ inputs.libxml2_version }}/usr/lib/libxml2${StaticLibSuffix}" `
+                -D LIBXML2_INCLUDE_DIR=${{ github.workspace }}/BinaryCache/Library/libxml2-${{ inputs.libxml2_version }}/usr/include/libxml2 `
+                -D LIBXML2_DEFINITIONS="-DLIBXML_STATIC" `
                 -D PACKAGE_VENDOR=compnerd.org `
                 -D SWIFT_VENDOR=compnerd.org `
                 -D LLVM_PARALLEL_LINK_JOBS=2 `
