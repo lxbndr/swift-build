@@ -1094,6 +1094,13 @@ jobs:
                 -D Python3_LIBRARY=$LIBPYTHON_PATH `
                 -D Python3_ROOT_DIR=$env:pythonLocation
 
+      - uses: actions/upload-artifact@v4
+        name: Upload LLVM Config
+        with:
+          name: llvm-${{ matrix.os }}-${{ matrix.arch }}-config
+          path: |
+            ${{ github.workspace }}/BinaryCache/1/include/llvm/Config
+
       - name: Build Compiler Distribution
         run: cmake --build ${{ github.workspace }}/BinaryCache/1 --target distribution
 
